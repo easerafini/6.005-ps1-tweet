@@ -3,6 +3,8 @@
  */
 package twitter;
 
+import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -24,7 +26,24 @@ public class Extract {
      *         every tweet in the list.
      */
     public static Timespan getTimespan(List<Tweet> tweets) {
-        throw new RuntimeException("not implemented");
+        List<Tweet> inmutableList = Collections.unmodifiableList(tweets);
+        if(inmutableList.isEmpty()) {
+            throw new AssertionError("Lista de tweets vacia: se requiere al menos 1 tweet.");
+        }
+        Instant instantMin = inmutableList.get(0).getTimestamp();
+        Instant instantMax = inmutableList.get(0).getTimestamp();
+        for(Tweet tweet : inmutableList) {
+            Instant instantTweet = tweet.getTimestamp();
+            if(instantTweet.isBefore(instantMin)) {
+                instantMin = instantTweet;
+            }
+            if(instantTweet.isAfter(instantMax)) {
+                instantMax = instantTweet;
+            }
+            
+        }
+        assert tweets.equals(inmutableList);
+        return new Timespan(instantMin, instantMax);
     }
 
     /**
