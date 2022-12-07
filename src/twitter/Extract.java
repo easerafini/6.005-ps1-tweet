@@ -62,7 +62,19 @@ public class Extract {
      *         include a username at most once.
      */
     public static Set<String> getMentionedUsers(List<Tweet> tweets) {
-        throw new RuntimeException("not implemented");
+    	Set<String> resultado = new MyHashSet<>();
+    	if(!tweets.isEmpty()) {
+    		for(Tweet tweet:tweets) {
+    			String[] words = tweet.getText().split("\\s");
+    			for(String word: words) {
+    				if(word.matches("@[\\w-]+")) {
+    					String mention = word.substring(1);
+    					resultado.add(mention);
+    				}
+    			}
+    		}
+    	}
+    	return resultado;
     }
 
 }
