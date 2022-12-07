@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -303,6 +304,28 @@ public class ExtractTest {
 		assertFalse("expected false, victor fue agregado", mentionedUsers.add("VICTOR"));
 		assertFalse("expected false, mike fue agragado", mentionedUsers.add("mike"));
 	}
+	
+	/*
+	 * Test que lista de tweets no cambia
+	 */
+    @Test
+    public void testGetMentionedUsersNoCambiaListaTweets() {
+        
+        final List<Tweet> listaOriginal = Arrays.asList(tweetCaseInsensitive,tweetCaseInsensitiveMayorUnTweet);
+        final List<Tweet> copiaListaOriginal = Arrays.asList(tweetCaseInsensitive,tweetCaseInsensitiveMayorUnTweet);
+        assertTrue("se espera que ambas listas sean iguales",listaOriginal.equals(copiaListaOriginal));
+        Set<String> mentionedUsers = Extract.getMentionedUsers(listaOriginal);
+        assertEquals("expected 2 menciones", 2, mentionedUsers.size());
+        assertTrue("expected true", mentionedUsers.contains("mike"));
+        assertTrue("expected true", mentionedUsers.contains("victor"));
+        assertTrue("expected true", mentionedUsers.contains("mIke"));
+        assertTrue("expected true", mentionedUsers.contains("VICTOR"));
+        assertFalse("expected false, victor fue agregado", mentionedUsers.add("VICTOR"));
+        assertFalse("expected false, mike fue agragado", mentionedUsers.add("mike"));
+        assertTrue("se espera que ambas listas sean iguales",listaOriginal.equals(copiaListaOriginal));
+        
+    }
+	
 	/*
 	 * Warning: all the tests you write here must be runnable against any Extract
 	 * class that follows the spec. It will be run against several staff
