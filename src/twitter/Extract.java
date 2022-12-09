@@ -5,8 +5,11 @@ package twitter;
 
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Extract consists of methods that extract information from a list of tweets.
@@ -62,9 +65,10 @@ public class Extract {
      *         include a username at most once.
      */
     public static Set<String> getMentionedUsers(List<Tweet> tweets) {
-    	Set<String> resultado = new MyHashSet<>();
-    	if(!tweets.isEmpty()) {
-    		for(Tweet tweet:tweets) {
+    	final List<Tweet> tweetsInmutable = Collections.unmodifiableList(tweets);
+    	final Set<String> resultado = new MyHashSet<>();
+    	if(!tweetsInmutable.isEmpty()) {
+    		for(Tweet tweet:tweetsInmutable) {
     			String[] words = tweet.getText().split("\\s");
     			for(String word: words) {
     				if(word.matches("@[\\w-]+")) {
@@ -74,7 +78,32 @@ public class Extract {
     			}
     		}
     	}
+    	assert tweets.equals(tweetsInmutable);
     	return resultado;
+    }
+    
+    /**
+     * Get usernames mentioned in a list of tweets.
+     * 
+     * @param tweets
+     *            list of tweets with distinct ids, not modified by this method.
+     * @return the set of hashtags who are mentioned in the text of the tweets.
+     *         A hashtag is "#" followed by a string de chars of words.
+     */
+    public static Set<String> getMentionedHashtags(List<Tweet> tweets) {
+    	final List<Tweet> tweetsInmutable = Collections.unmodifiableList(tweets);
+    	final Set<String> result = new HashSet<>();
+    	if(!tweetsInmutable.isEmpty()) {
+    		for(Tweet tweet:tweetsInmutable) {
+    			Pattern pattern = Pattern.compile("#\\w+");
+    			Matcher matcher = pattern.matcher(tweet.getText());
+    			while(matcher.find()) {
+    				result.add(matcher.group().substring(1));
+    			}
+    		}
+    	}
+    	assert tweets.equals(tweetsInmutable);
+    	return Collections.unmodifiableSet(result);
     }
 
 }
